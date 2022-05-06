@@ -14,24 +14,28 @@
 
       {% if not form.vars.valid %}
         <div class="alert alert-danger">
-          Erreur
+          Erreur je ne sais pas quoi
         </div>
       {% endif %}
 
       <div class="row">
         <div class="col-md-8">
-          {% if property.filename %}
-            <img src="{{ vich_uploader_asset(property, 'imageFile') | imagine_filter('medium') }}" alt="card-img-top" style="width: 100%; height:auto;">
-          {% else %}
-            <img src="{{ '/images/properties/empty.jpg' | imagine_filter('medium') }}" alt="card-img-top" style="width: 100%; height:auto;">
-          {% endif %}
+          <div data-slider>
+            {% if property.pictures is empty %}
+              <img src="{{ '/images/empty.jpg' | imagine_filter('medium') }}" alt="card-img-top" style="width: 100%; height:auto;">
+            {% else %}
+              {% for picture in property.pictures %}
+                <img src="{{ vich_uploader_asset(picture, 'imageFile') | imagine_filter('medium') }}" alt="card-img-top" style="width: 100%; height:auto;">
+              {% endfor %}
+            {% endif %}
+          </div>
         </div>
         <div class="col-md-4">
           <h1>{{ property.title }}</h1>
           <h2>{{ property.rooms }} pièces - {{ property.surface }} m²</h2>
           <div class="text-primary" style="font-size: 4rem;font-weight: bold;">{{ property.formattedPrice }} €</div>
-          <a class="btn btn-primary">Contacter l'agence : </a>
-          <div id="contactForm" class="mt-4">
+          <a href="#" class="btn btn-primary" id="contactButton"{% if form.vars.submitted %} style="display: none;"{% endif %}>Contacter l'agence</a>
+          <div id="contactForm" class="mt-4"{% if not form.vars.submitted %} style="display: none;"{% endif %}>
             {{ form_start(form) }}
             <div class="row">
               <div class="col">{{ form_row(form.firstname) }}</div>
@@ -39,7 +43,7 @@
             </div>
             <div class="row">
               <div class="col">{{ form_row(form.phone) }}</div>
-              <div class="col">{{ form_row(form.email) }} </div>
+              <div class="col">{{ form_row(form.email) }}</div>
             </div>
             {{ form_rest(form) }}
             <div class="form-group">
@@ -91,6 +95,7 @@
         </ul>
       </div>
     </div>
+    <div id="map" style="width: 100%; height: 500px" data-lat="{{ property.lat }}" data-lng="{{ property.lng }}"></div>
   </div>
 {% endblock %}
 

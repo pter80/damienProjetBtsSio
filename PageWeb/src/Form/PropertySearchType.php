@@ -13,7 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class PropertySearchType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
+    public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('minSurface', IntegerType::class, [
@@ -40,15 +40,15 @@ class PropertySearchType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'data_class' => PropertySearch::class,
             'method' => 'get',
-            'crsf_protection' => false
+            'csrf_protection' => false
         ]);
     }
-    
+
     public function getBlockPrefix()
     {
         return '';

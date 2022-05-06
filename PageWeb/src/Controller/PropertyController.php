@@ -36,7 +36,7 @@ class PropertyController extends AbstractController
     }
     
     /**
-     * @Route("/biens", name="property_index")
+     * @Route("/biens", name="property.index")
      * @return Response
      */
     public function biens(PaginatorInterface $paginator, Request $request): Response
