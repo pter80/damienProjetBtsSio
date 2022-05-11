@@ -4,18 +4,13 @@ namespace App\Repository;
 
 use App\Entity\Property;
 use App\Entity\PropertySearch;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\ManagerRegistry;
 
-
 /**
- * @extends ServiceEntityRepository<Property>
- *
- * @method Property|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Property|null find(Property[]$id, $lockMode = null, $lockVersion = null)
  * @method Property|null findOneBy(array $criteria, array $orderBy = null)
  * @method Property[]    findAll()
  * @method Property[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
@@ -26,32 +21,6 @@ class PropertyRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Property::class);
     }
-
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    public function add(Property $entity, bool $flush = true): void
-    {
-        $this->_em->persist($entity);
-        if ($flush) {
-            $this->_em->flush();
-        }
-    }
-
-    /**
-     * @throws ORMException
-     * @throws OptimisticLockException
-     */
-    public function remove(Property $entity, bool $flush = true): void
-    {
-        $this->_em->remove($entity);
-        if ($flush) {
-            $this->_em->flush();
-        }
-    }
-    
-    
 
     /**
      * @return Query
@@ -71,7 +40,16 @@ class PropertyRepository extends ServiceEntityRepository
                 ->andWhere('p.surface >= :minsurface')
                 ->setParameter('minsurface', $search->getMinSurface());
         }
-        
+
+        if ($search->getLat() && $search->getLng() && $search->getDistance()) {
+            $query = $query
+                ->select('p')
+                ->andWhere('(6353 * 2 * ASIN(SQRT( POWER(SIN((p.lat - :lat) *  pi()/180 / 2), 2) +COS(p.lat * pi()/180) * COS(:lat * pi()/180) * POWER(SIN((p.lng - :lng) * pi()/180 / 2), 2) ))) <= :distance')
+                ->setParameter('lng', $search->getLng())
+                ->setParameter('lat', $search->getLat())
+                ->setParameter('distance', $search->getDistance());
+        }
+
         if ($search->getOptions()->count() > 0) {
             $k = 0;
             foreach($search->getOptions() as $option) {
@@ -81,11 +59,10 @@ class PropertyRepository extends ServiceEntityRepository
                     ->setParameter("option$k", $option);
             }
         }
-        
-        return $query->getQuery()
-        ; 
+
+        return $query->getQuery();
     }
-    
+
     /**
      * @return Property[]
      */
@@ -94,20 +71,19 @@ class PropertyRepository extends ServiceEntityRepository
         return $this->findVisibleQuery()
             ->setMaxResults(4)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    
+
     private function findVisibleQuery(): QueryBuilder
     {
         return $this->createQueryBuilder('p')
-            ->Where('p.sold = false')
-        ;
+            ->where('p.sold = false');
     }
 
-    // /**
-    //  * @return Property[] Returns an array of Property objects
-    //  */
+
+//    /**
+//     * @return Property[] Returns an array of Property objects
+//     */
     /*
     public function findByExampleField($value)
     {

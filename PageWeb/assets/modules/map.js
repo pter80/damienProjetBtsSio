@@ -17,42 +17,23 @@ export default class Map {
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v10',
     center: [map.dataset.lng, map.dataset.lat],
-    zoom: 9
+    zoom: 13
     });
      
+    
     // Load custom data to supplement the search results.
     const customData = {
     'features': [
     {
     'type': 'Feature',
     'properties': {
-    'title': 'Lincoln Park is special'
+    'title': 'map'
     },
     'geometry': {
-    'coordinates': [-87.637596, 41.940403],
+    'coordinates': [map.dataset.lng, map.dataset.lat],
     'type': 'Point'
     }
     },
-    {
-    'type': 'Feature',
-    'properties': {
-    'title': 'Burnham Park is special'
-    },
-    'geometry': {
-    'coordinates': [-87.603735, 41.829985],
-    'type': 'Point'
-    }
-    },
-    {
-    'type': 'Feature',
-    'properties': {
-    'title': 'Millennium Park is special'
-    },
-    'geometry': {
-    'coordinates': [-87.622554, 41.882534],
-    'type': 'Point'
-    }
-    }
     ],
     'type': 'FeatureCollection'
     };
@@ -70,7 +51,6 @@ export default class Map {
     // Add a tree emoji as a prefix for custom
     // data results using carmen geojson format:
     // https://github.com/mapbox/carmen/blob/master/carmen-geojson.md
-    feature['place_name'] = `🌲 ${feature.properties.title}`;
     feature['center'] = feature.geometry.coordinates;
     feature['place_type'] = ['park'];
     matchingFeatures.push(feature);
@@ -80,7 +60,7 @@ export default class Map {
     }
      
     // Add the control to the map.
-    map.addControl(
+    addr.addControl(
     new MapboxGeocoder({
     accessToken: mapboxgl.accessToken,
     localGeocoder: forwardGeocoder,

@@ -23,6 +23,7 @@
         "leaflet": "^1.8.0",
         "mapbox-gl": "^2.8.2",
         "places.js": "^1.19.0",
-        "select2": "^4.1.0-rc.0"
+        "select2": "^4.1.0-rc.0",
+        "slick-carousel": "^1.8.1"
     }
 }

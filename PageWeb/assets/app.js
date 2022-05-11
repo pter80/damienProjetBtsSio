@@ -1,5 +1,8 @@
 import Places from 'places.js'
 import Map from '/assets/modules/map.js'
+import 'slick-carousel'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 
 Map.init()
 
@@ -16,10 +19,25 @@ if (inputAddress !== null) {
   })
 }
 
+let searchAddress = document.querySelector('#search_address')
+if (searchAddress !== null) {
+  let place = Places({
+    container: searchAddress
+  })
+  place.on('change', e => {
+    document.querySelector('#lat').value = e.suggestion.latlng.lat
+    document.querySelector('#lng').value = e.suggestion.latlng.lng
+  })
+}
+
 let $ = require('jquery')
 import './styles/app.css';
 require('select2')
 
+$('[data-slider]').slick({
+  dots: true,
+  arrows: true
+})
 
 $('select').select2()
 let $contactButton = $('#contactButton')
